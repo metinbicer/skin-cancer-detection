@@ -164,3 +164,47 @@ def train(n_epochs, loaders, model, optimizer, criterion, save_path,
         
     # return trained model
     return model
+
+
+'''
+test the trained model
+
+inputs:
+     loader     --> test data loader
+     model      --> trained model 
+     criterion  --> criterion used in training
+     use_cuda   --> bool for using GPU computing (default depends on its availability)
+outputs:
+    model --> trained model
+'''
+def test(loader, model, criterion, use_cuda=torch.cuda.is_available()):
+
+    # monitor test loss and accuracy
+    test_loss = 0.
+    correct = 0.
+    total = 0.
+
+    model.eval()
+    for batch_idx, (data, target) in enumerate(loader):
+        # move to GPU
+        if use_cuda:
+            data, target = data.cuda(), target.cuda()
+        # forward pass: compute predicted outputs by passing inputs to the model
+        output = model(data)
+        # calculate the loss
+        loss = criterion(output, target)
+        # update average test loss 
+        test_loss = test_loss + ((1 / (batch_idx + 1)) * (loss.data - test_loss))
+        # convert output probabilities to predicted class
+        pred = output.data.max(1, keepdim=True)[1]
+        # compare predictions to true label
+        correct += np.sum(np.squeeze(pred.eq(target.data.view_as(pred))).cpu().numpy())
+        total += data.size(0)
+            
+    print('Test Loss: {:.6f}\n'.format(test_loss))
+    
+    test_accuracy = correct / total
+    print('\nTest Accuracy: %2d%% (%2d/%2d)' % (
+        100. * test_accuracy, correct, total))
+    
+    return test_loss, test_accuracy
