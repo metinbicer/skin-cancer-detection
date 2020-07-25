@@ -73,6 +73,10 @@ outputs:
 def train(n_epochs, loaders, model, optimizer, criterion, save_path, 
           valid_loss_min=np.Inf, use_cuda=torch.cuda.is_available()):
     
+    # initialize loss list for the training process
+    train_loss_list = []
+    valid_loss_list = []
+        
     for epoch in range(1, n_epochs+1):
         # initialize variables to monitor training and validation loss
         train_loss = 0.0
@@ -130,7 +134,10 @@ def train(n_epochs, loaders, model, optimizer, criterion, save_path,
                     len(loaders['train']),
                     train_loss
                     ))
-                
+        
+        # record the training loss for the epoch
+        train_loss_list.append(train_loss)
+        
         ######################    
         # validate the model #
         ######################
@@ -151,12 +158,22 @@ def train(n_epochs, loaders, model, optimizer, criterion, save_path,
             valid_loss
             ))
         
+        # record the validation loss for the epoch
+        valid_loss_list.append(valid_loss)
+        
         # save the model if validation loss has decreased
         if valid_loss <= valid_loss_min:
             print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model ...'.format(
                                                                                             valid_loss_min,
                                                                                             valid_loss))
-            torch.save(model.state_dict(), save_path)
+            # save the model with some other info about training
+            torch.save({'state_dict': model.state_dict(),
+                        'train_loss': train_loss_list,
+                        'valid_loss': valid_loss_list,
+                        'epoch': epoch + 1,
+                        'optimizer' : optimizer.state_dict(),
+                        'architecture': type(model)},
+                        save_path)
             valid_loss_min = valid_loss
     
         # print a line starting new epoc
