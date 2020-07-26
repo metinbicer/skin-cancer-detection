@@ -16,12 +16,12 @@ from model import prepareModel
 num_classes = 3
 
 # hyperparameters
-lr = 0.001
-n_epochs = 40
-batch_size = 64
+lr = 0.0001
+n_epochs = 20
+batch_size = 32
 
 # define model from pytorch
-model = torchvision.models.inception_v3(pretrained=True)
+model = torchvision.models.resnet18(pretrained=True)
 
 # a model will be returned with num_classes for the classification
 # only trainable parameters are the last layer
@@ -37,4 +37,4 @@ optimizer = optim.Adam(model.parameters(), lr=lr)
 loaders = dataLoader(model, batch_size)
 
 model = train(n_epochs, loaders, model, optimizer, criterion, 
-              save_path='Inceptionv3.pt')
+              save_path='best.pth.tar')
