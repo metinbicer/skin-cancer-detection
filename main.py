@@ -38,3 +38,5 @@ loaders = dataLoader(model, batch_size)
 
 model = train(n_epochs, loaders, model, optimizer, criterion, 
               save_path='best.pth.tar')
+
+test(loaders['test'], model, criterion)
