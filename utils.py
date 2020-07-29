@@ -229,6 +229,49 @@ def test(loader, model, criterion, use_cuda=torch.cuda.is_available()):
 
 
 '''
+predictions from the trained model and visualize
+
+inputs:
+     img_path       --> full path to the image to be classified
+     model          --> trained model 
+     idx_to_class   --> dict whose keys are indexes and values are class names
+outputs:
+    class_name      --> predicted class name
+'''
+def predict(img_path, model, idx_to_class):
+    
+    # load the image 
+    im = Image.open(img_path)
+    
+    # evaluation mode
+    model.eval()
+    # in cpu
+    model = model.cpu()
+    
+    # if the model is Inception V3, the input size is 299x299    
+    size = 299 if isinstance(model, models.inception.Inception3) else 225
+    
+    transformation = transforms.Compose([transforms.Resize(size),
+                                         transforms.CenterCrop(size),
+                                         transforms.ToTensor(),
+                                         transforms.Normalize(mean=[0.485, 0.456, 0.406], 
+                                                              std=[0.229, 0.224, 0.225])
+                                         ])
+    
+    # transform the input image
+    im = transformation(im).unsqueeze(0)
+    
+    # get the class with the highest score
+    class_id = torch.argmax(model(im)).item()
+    class_name = idx_to_class[class_id]
+    
+    # visualize
+    implot(img_path, 'predicted class: ' + class_name)
+    
+    return class_name
+
+
+'''
 visualize the given image
 
 inputs:
