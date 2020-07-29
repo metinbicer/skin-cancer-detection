@@ -40,3 +40,9 @@ model = train(n_epochs, loaders, model, optimizer, criterion,
               save_path='best.pth.tar')
 
 test(loaders['test'], model, criterion)
+
+# create the dict whose keys are indexes and values are class names
+idx_to_class = {val:key for key, val in loaders['train'].dataset.class_to_idx.items()}
+
+# predict an example image
+predict('data/nevus.jpg', model, idx_to_class)
