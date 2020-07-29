@@ -12,6 +12,7 @@ import os
 import torch
 from torchvision import datasets, transforms, models
 import numpy as np
+from PIL import Image
 
 # loads the data 
 # inputs:
@@ -225,3 +226,23 @@ def test(loader, model, criterion, use_cuda=torch.cuda.is_available()):
         100. * test_accuracy, correct, total))
     
     return test_loss, test_accuracy
+
+
+'''
+visualize the given image
+
+inputs:
+     img_path       --> full path to the image to be classified
+     model          --> trained model 
+     idx_to_class   --> dict whose keys are indexes and values are class names
+outputs:
+    class_name      --> predicted class name
+'''
+def implot(img_path, text=None):
+    im = Image.open(img_path)
+    plt.imshow(im)
+    plt.show()
+    
+    if text is not None:
+        plt.text(10, 10, text, 
+                 bbox=dict(fill=False, edgecolor='red', linewidth=2))
