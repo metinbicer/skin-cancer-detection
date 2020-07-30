@@ -1,10 +1,10 @@
-## Overview
+# Overview
 Udacity Deep Learning Nanodegree course project on skin cancer detection paper (https://www.nature.com/articles/nature21056)
 
-# About
+## About
 It uses transfer learning to classify three classes of skin cancer. Different pretrained models in Pytorch can be selected. Data loading will be based on selected model. Pretrained model can be trained and tested. New predictions can be made by the new model.
 
-# Usage
+## Usage
 1. Clone the repo
 ```
 git clone https://github.com/metinbicer/skin-cancer-detection
